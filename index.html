@@ -346,15 +346,16 @@
 
       // Kirim data langsung ke Supabase Cloud
       _supabase.from('pesanan').insert([
-        {
-          nama_pembeli: nama,
-          nomor_hp: nohp,
-          alamat: alamat,
-          detail_order: teksDetailOrder,
-          total_harga: totalHarga,
-          status: 'baru'
-        }
-      ])
+          {
+            nama_pembeli: nama,
+            nomor_hp: nohp,
+            alamat: alamat,
+            detail_order: teksDetailOrder,
+            total_harga: totalHarga,
+            status: 'baru',
+            tanggal: tanggal   // ← tambahkan baris ini
+          }
+        ])
       .then(({ error }) => {
         if (error) {
           alert('Gagal mengirim ke database Supabase: ' + error.message);
