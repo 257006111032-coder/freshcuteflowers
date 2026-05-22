@@ -10,28 +10,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-    /* ============================================
-       CSS VARIABLES
-       ============================================ */
     :root {
-      --primary: #f3a3b5;       /* Pink pastel mawar lembut */
-      --primary-hover: #eb8fa3; /* Pink agak gelap saat di-hover */
-      --secondary: #e6dfd3;     /* Cream vintage lembut */
-      --bg-cream: #faf7f2;      /* Background halaman */
-      --text-dark: #4a3f3f;     /* Warna teks utama */
-      --text-muted: #8c7e7e;    /* Warna teks sekunder/redup */
-      --accent: #a3c4bc;        /* Hijau daun pastel daun sage */
+      --primary: #f3a3b5;
+      --primary-hover: #eb8fa3;
+      --secondary: #e6dfd3;
+      --bg-cream: #faf7f2;
+      --text-dark: #4a3f3f;
+      --text-muted: #8c7e7e;
+      --accent: #a3c4bc;
       --shadow: 0 10px 30px rgba(243, 163, 181, 0.15);
       --font-serif: 'Playfair Display', Georgia, serif;
       --font-display: 'Cormorant Garamond', serif;
       --font-sans: 'Poppins', Helvetica, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: var(--font-sans);
@@ -40,14 +33,16 @@
       line-height: 1.6;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       padding: 1.5rem;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Animasi Kelopak Bunga Gugur */
+    /* ============================================
+       ANIMASI KELOPAK
+       ============================================ */
     .petal {
       position: fixed;
       top: -10%;
@@ -58,16 +53,13 @@
     }
 
     @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg) translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg) translateX(100px);
-        opacity: 0;
-      }
+      0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg) translateX(100px); opacity: 0; }
     }
 
+    /* ============================================
+       CONTAINER FORM UTAMA
+       ============================================ */
     .container {
       background: #ffffff;
       width: 100%;
@@ -78,6 +70,7 @@
       position: relative;
       z-index: 2;
       border: 1px solid rgba(243, 163, 181, 0.2);
+      margin-top: 1.5rem;
     }
 
     .header {
@@ -119,9 +112,7 @@
       margin-top: 0.2rem;
     }
 
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
+    .form-group { margin-bottom: 1.25rem; }
 
     .form-group label {
       display: block;
@@ -153,7 +144,7 @@
 
     select.form-control {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a3f3f' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/\%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a3f3f' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: calc(100% - 1rem) center;
     }
@@ -185,11 +176,11 @@
       box-shadow: 0 6px 20px rgba(243, 163, 181, 0.4);
     }
 
-    .btn-submit:active {
-      transform: translateY(1px);
-    }
+    .btn-submit:active { transform: translateY(1px); }
 
-    /* Notifikasi Toast Sukses */
+    /* ============================================
+       TOAST NOTIFIKASI
+       ============================================ */
     .toast {
       position: fixed;
       bottom: -100px;
@@ -200,28 +191,297 @@
       padding: 1rem 2rem;
       border-radius: 50px;
       font-size: 0.9rem;
-      font-weight: 400;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      z-index: 10;
+      z-index: 100;
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       white-space: nowrap;
       opacity: 0;
     }
 
-    .toast.show {
-      bottom: 2rem;
-      opacity: 1;
+    .toast.show { bottom: 2rem; opacity: 1; }
+
+    /* ============================================
+       SECTION HISTORY PESANAN
+       Kotak di bawah form utama
+       ============================================ */
+    .history-section {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Judul section history */
+    .history-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .history-title span {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: block;
+      font-weight: 400;
+      margin-top: 0.2rem;
+    }
+
+    /* Kotak pencarian nomor HP */
+    .history-search-box {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(243, 163, 181, 0.2);
+      margin-bottom: 1rem;
+    }
+
+    .history-search-box label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    /* Baris input + tombol cari */
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .search-row input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      font-size: 0.92rem;
+      font-family: var(--font-sans);
+      color: var(--text-dark);
+      background-color: #faf8f5;
+      border: 1px solid #ebdcd5;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .search-row input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(243, 163, 181, 0.15);
+    }
+
+    .btn-search {
+      padding: 0.7rem 1.2rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-search:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================
+       HASIL HISTORY — daftar kartu pesanan
+       ============================================ */
+    .history-results {
+      display: none; /* tersembunyi sebelum cari */
+    }
+
+    /* Muncul setelah pencarian */
+    .history-results.show {
+      display: block;
+      animation: fadeUp 0.35s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Info nama pembeli di atas hasil */
+    .history-info {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+      font-style: italic;
+      font-family: var(--font-display);
+      font-size: 1rem;
+    }
+
+    /* Satu kartu pesanan */
+    .history-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 0.8rem;
+      box-shadow: 0 4px 15px rgba(243, 163, 181, 0.1);
+      border: 1px solid rgba(243, 163, 181, 0.25);
+      transition: box-shadow 0.2s;
+    }
+
+    .history-card:hover {
+      box-shadow: 0 6px 20px rgba(243, 163, 181, 0.2);
+    }
+
+    /* Baris atas kartu: nama produk + waktu */
+    .hcard-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.7rem;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .hcard-produk {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .hcard-waktu {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Info detail pesanan */
+    .hcard-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 0.8rem;
+    }
+
+    .hcard-row {
+      display: flex;
+      gap: 8px;
+      font-size: 0.83rem;
+    }
+
+    .hcard-row .lbl {
+      color: var(--text-muted);
+      min-width: 90px;
+      font-size: 0.8rem;
+    }
+
+    .hcard-row .val {
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    /* ============================================
+       BADGE STATUS PESANAN
+       Warna berbeda untuk tiap status
+       ============================================ */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* Status: Baru — biru */
+    .status-baru {
+      background: #e8f0fe;
+      color: #1a56db;
+      border: 1px solid #c3d3fa;
+    }
+
+    /* Status: Diproses — kuning/amber */
+    .status-diproses {
+      background: #fff8e1;
+      color: #d48806;
+      border: 1px solid #ffe082;
+    }
+
+    /* Status: Selesai — hijau */
+    .status-selesai {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+
+    /* Pesan kosong / tidak ada pesanan */
+    .history-empty {
+      text-align: center;
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px dashed rgba(243,163,181,0.4);
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Loading state */
+    .history-loading {
+      text-align: center;
+      padding: 1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-style: italic;
+      font-family: var(--font-display);
+    }
+
+    /* Divider dekoratif antar section */
+    .section-divider {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0.5rem 0;
+      z-index: 2;
+      position: relative;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(243,163,181,0.5), transparent);
+    }
+
+    .section-divider span {
+      font-size: 1.1rem;
+      opacity: 0.6;
     }
 
     @media (max-width: 480px) {
       body { padding: 1rem; }
       .container { padding: 2rem 1.25rem; }
       .header h1 { font-size: 1.8rem; }
+      .search-row { flex-direction: column; }
+      .btn-search { width: 100%; }
     }
   </style>
 </head>
 <body>
 
+  <!-- FORM PEMESANAN -->
   <div class="container">
     <div class="header">
       <div class="logo-container">
@@ -276,19 +536,58 @@
     </div>
   </div>
 
+  <!-- DIVIDER DEKORATIF -->
+  <div class="section-divider">
+    <span>🌸</span>
+  </div>
+
+  <!-- ==========================================
+       SECTION HISTORY PESANAN
+       Pembeli cari pesanannya pakai nomor HP
+       ========================================== -->
+  <div class="history-section">
+
+    <div class="history-title">
+      Cek Status Pesananmu
+      <span>Masukkan nomor WhatsApp yang kamu gunakan saat pesan</span>
+    </div>
+
+    <!-- Kotak pencarian -->
+    <div class="history-search-box">
+      <label for="searchHp">📱 Nomor WhatsApp kamu</label>
+      <div class="search-row">
+        <input
+          type="tel"
+          id="searchHp"
+          placeholder="Contoh: 08123456xxx"
+          onkeydown="if(event.key==='Enter') searchHistory()"
+        />
+        <!-- onclick panggil fungsi searchHistory() -->
+        <button class="btn-search" onclick="searchHistory()">🔍 Cek Pesanan</button>
+      </div>
+    </div>
+
+    <!-- Hasil pencarian (awalnya tersembunyi) -->
+    <div class="history-results" id="historyResults">
+      <!-- Diisi oleh JavaScript -->
+    </div>
+
+  </div>
+
+  <!-- Toast notifikasi -->
   <div class="toast" id="toast">Pesananmu sukses terkirim! 🌷</div>
 
   <script>
     // ==========================================
-    // KONFIGURASI SUPABASE CLOUD
+    // KONFIGURASI SUPABASE
     // ==========================================
-    const SUPABASE_URL = "https://vhfhitghvmgqzxbglzfp.supabase.co";
+    const SUPABASE_URL     = "https://vhfhitghvmgqzxbglzfp.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZmhpdGdodm1ncXp4YmdsemZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODU4NzEsImV4cCI6MjA5NDk2MTg3MX0.bJfdceQ44DQ8C35kZ_RT557EVBikku5B7BQqiYnJAWw";
-
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+
     // ==========================================
-    // 1. ANIMASI KELOPAK BETERBANGAN
+    // 1. ANIMASI KELOPAK
     // ==========================================
     const petalEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️'];
 
@@ -298,24 +597,20 @@
       el.textContent = petalEmojis[Math.floor(Math.random() * petalEmojis.length)];
       el.style.left = Math.random() * 100 + 'vw';
       el.style.fontSize = (0.9 + Math.random() * 1.1) + 'rem';
-
       const dur = 7 + Math.random() * 7;
       el.style.animationDuration = dur + 's';
       el.style.animationDelay = (Math.random() * 4) + 's';
       el.style.opacity = 0.5 + Math.random() * 0.5;
-
       document.body.appendChild(el);
       setTimeout(() => el.remove(), (dur + 5) * 1000);
     }
 
     setInterval(createPetal, 1300);
+    for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 400);
 
-    for (let i = 0; i < 6; i++) {
-      setTimeout(createPetal, i * 400);
-    }
 
     // ==========================================
-    // 2. FUNGSI SUBMIT PESANAN KE SUPABASE
+    // 2. SUBMIT PESANAN KE SUPABASE
     // ==========================================
     function submitOrder() {
       const nama    = document.getElementById('nama').value.trim();
@@ -328,50 +623,158 @@
 
       if (!nama || !nohp || !produk || !jumlah || !tanggal || !alamat) {
         alert('Mohon lengkapi semua field ya~ 🌷');
-        return; 
+        return;
       }
 
-      // Perbaikan logika hitung harga asli (Buket 5K menjadi 5000)
       let hargaPerPcs = 0;
-      if (produk === 'Buket 20K') { hargaPerPcs = 20000; } 
-      else if (produk === 'Buket 10K') { hargaPerPcs = 10000; } 
-      else if (produk === 'Buket 5K') { hargaPerPcs = 5000; }
+      if (produk === 'Buket 20K')      hargaPerPcs = 20000;
+      else if (produk === 'Buket 10K') hargaPerPcs = 10000;
+      else if (produk === 'Buket 5K')  hargaPerPcs = 5000;
 
       const totalHarga = parseInt(jumlah) * hargaPerPcs;
 
       let teksDetailOrder = `Produk: ${produk} (${jumlah} pcs) | Tgl Kirim: ${tanggal}`;
-      if (catatan) {
-        teksDetailOrder += ` | Catatan: ${catatan}`;
-      }
+      if (catatan) teksDetailOrder += ` | Catatan: ${catatan}`;
 
-      // Kirim data langsung ke Supabase Cloud
-      _supabase.from('pesanan').insert([
-          {
-            nama_pembeli: nama,
-            nomor_hp: nohp,
-            alamat: alamat,
-            detail_order: teksDetailOrder,
-            total_harga: totalHarga,
-            status: 'baru',
-            tanggal: tanggal   // ← tambahkan baris ini
-          }
-        ])
+      _supabase.from('pesanan').insert([{
+        nama_pembeli: nama,
+        nomor_hp:     nohp,
+        alamat:       alamat,
+        detail_order: teksDetailOrder,
+        total_harga:  totalHarga,
+        status:       'baru',
+        tanggal:      tanggal
+      }])
       .then(({ error }) => {
         if (error) {
-          alert('Gagal mengirim ke database Supabase: ' + error.message);
+          alert('Gagal mengirim ke database: ' + error.message);
         } else {
+          // Tampilkan toast sukses
           const toast = document.getElementById('toast');
           toast.classList.add('show');
           setTimeout(() => toast.classList.remove('show'), 4500);
 
+          // Reset semua input
           ['nama','nohp','jumlah','tanggal','alamat','catatan'].forEach(id => {
             document.getElementById(id).value = '';
           });
           document.getElementById('produk').value = '';
 
-          alert('Pesanan kamu berhasil dikirim! Kami akan segera menghubungi kamu 🌷');
+          // Otomatis isi nomor HP di kolom cek history
+          // dan langsung tampilkan history pesanan pembeli ini
+          document.getElementById('searchHp').value = nohp;
+          searchHistory();
         }
       });
+    }
+
+
+    // ==========================================
+    // 3. FUNGSI CEK HISTORY PESANAN
+    //    Cari pesanan berdasarkan nomor HP pembeli
+    //    Hanya tampil pesanan milik nomor HP itu
+    // ==========================================
+    function searchHistory() {
+      const hp = document.getElementById('searchHp').value.trim();
+      const resultsEl = document.getElementById('historyResults');
+
+      // Validasi: nomor HP harus diisi
+      if (!hp) {
+        alert('Masukkan nomor WhatsApp kamu dulu ya~ 🌷');
+        return;
+      }
+
+      // Tampilkan area hasil + loading
+      resultsEl.classList.add('show');
+      resultsEl.innerHTML = '<div class="history-loading">🌸 Sedang mencari pesananmu...</div>';
+
+      // Query ke Supabase:
+      // .eq('nomor_hp', hp) = filter hanya nomor HP yang cocok
+      // .order('id', { ascending: false }) = terbaru di atas
+      _supabase
+        .from('pesanan')
+        .select('*')
+        .eq('nomor_hp', hp)
+        .order('id', { ascending: false })
+        .then(({ data, error }) => {
+
+          if (error) {
+            resultsEl.innerHTML = `<div class="history-empty">Gagal mengambil data: ${error.message}</div>`;
+            return;
+          }
+
+          // Tidak ada pesanan dengan nomor HP ini
+          if (!data || data.length === 0) {
+            resultsEl.innerHTML = `
+              <div class="history-empty">
+                Belum ada pesanan dengan nomor <b>${hp}</b> 🌷<br>
+                <small style="font-size:0.8rem;margin-top:4px;display:block">Pastikan nomor yang kamu masukkan sama dengan saat pesan</small>
+              </div>
+            `;
+            return;
+          }
+
+          // Ada pesanan — tampilkan semua
+          // Ambil nama dari pesanan pertama
+          const namaPembeli = data[0].nama_pembeli;
+
+          // Render kartu tiap pesanan
+          const cards = data.map(order => {
+
+            // Tentukan badge status
+            const status = order.status || 'baru';
+            const badgeMap = {
+              baru:     { cls: 'status-baru',     icon: '🔵', label: 'Pesanan Baru' },
+              diproses: { cls: 'status-diproses',  icon: '🟡', label: 'Sedang Diproses' },
+              selesai:  { cls: 'status-selesai',   icon: '🟢', label: 'Selesai / Siap Kirim' }
+            };
+            const badge = badgeMap[status] || badgeMap['baru'];
+
+            // Format tanggal pesan masuk
+            // order.created_at = waktu otomatis dari Supabase
+            const waktuMasuk = order.created_at
+              ? new Date(order.created_at).toLocaleDateString('id-ID', {
+                  day: 'numeric', month: 'long', year: 'numeric'
+                })
+              : '-';
+
+            // Format total harga ke Rupiah
+            const totalFmt = order.total_harga
+              ? 'Rp ' + parseInt(order.total_harga).toLocaleString('id-ID')
+              : '-';
+
+            return `
+              <div class="history-card">
+                <div class="hcard-head">
+                  <span class="hcard-produk">💐 ${order.detail_order}</span>
+                  <span class="hcard-waktu">${waktuMasuk}</span>
+                </div>
+                <div class="hcard-info">
+                  <div class="hcard-row">
+                    <span class="lbl">💰 Total</span>
+                    <span class="val">${totalFmt}</span>
+                  </div>
+                  <div class="hcard-row">
+                    <span class="lbl">📍 Alamat</span>
+                    <span class="val">${order.alamat}</span>
+                  </div>
+                </div>
+                <!-- Badge status — warna berubah sesuai yang diupdate admin -->
+                <span class="status-badge ${badge.cls}">
+                  ${badge.icon} ${badge.label}
+                </span>
+              </div>
+            `;
+          }).join('');
+
+          // Gabungkan info nama + semua kartu
+          resultsEl.innerHTML = `
+            <div class="history-info">
+              Halo, <b>${namaPembeli}</b>! 🌸 Kamu punya <b>${data.length}</b> pesanan
+            </div>
+            ${cards}
+          `;
+        });
     }
   </script>
 </body>
