@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <title>Fresh Cute Flower – Panel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ============================================
+       CSS VARIABLES — warna tema admin
+       ============================================ */
+    :root {
+      --primary: #d48a9b;       /* Pink pastel gelap/dewasa */
+      --primary-hover: #c27687; 
+      --bg-dark: #2b2526;       /* Background luar halaman login */
+      --bg-admin: #fcfaf7;      /* Background panel utama admin */
+      --text-dark: #3a3333;     
+      --text-muted: #7d7071;    
+      --border-color: #ebdcd5;
+      --shadow: 0 10px 35px rgba(58, 51, 51, 0.08);
+      
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-sans: 'Poppins', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      min-height: 100vh;
+      transition: background-color 0.4s ease;
+    }
+
+    /* ============================================
+       A. HALAMAN LOGIN
+       ============================================ */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .login-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      padding: 2.5rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .login-box h2 {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      text-align: center;
+      background: #faf8f6;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-box button:hover {
+      background: var(--primary-hover);
+    }
+
+    .login-error {
+      color: #d9534f;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+
+    /* ============================================
+       B. PANEL UTAMA ADMIN (HIDDEN DEFAULT)
+       ============================================ */
+    .admin-wrapper {
+      display: none; /* Disembunyikan sebelum login */
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Ketika class 'visible' ditambahkan oleh JS */
+    .admin-wrapper.visible {
+      display: block;
+    }
+
+    /* Pindahkan background body jadi terang saat admin aktif */
+    body:has(.admin-wrapper.visible) {
+      background-color: var(--bg-admin);
+    }
+
+    /* Top Navigation / Bar */
+    .admin-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .admin-title h1 {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+    }
+
+    .admin-title p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: #f4ece8;
+      border: 1px solid #ebd3c8;
+      color: #a65b6d;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .logout-btn:hover {
+      background: #ebd3c8;
+    }
+
+    /* Statistik Atas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      padding: 1.25rem 1rem;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 1px solid #f0eae6;
+    }
+
+    .stat-card .num {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      display: block;
+    }
+
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 0.1rem;
+    }
+
+    /* Filter & Kontrol Massa */
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs {
+      display: flex;
+      background: #eee6e2;
+      padding: 0.25rem;
+      border-radius: 10px;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 1rem;
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .filter-btn.active {
+      background: #ffffff;
+      color: var(--text-dark);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .clear-all-btn {
+      padding: 0.45rem 1rem;
+      background: #fff;
+      color: #d9534f;
+      border: 1px solid #f5cecd;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .clear-all-btn:hover {
+      background: #fdf3f3;
+    }
+
+    /* Daftar Kartu Pesanan */
+    .order-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .order-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid #f0eae6;
+      transition: transform 0.2s;
+    }
+
+    .order-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .order-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .order-badge {
+      display: inline-block;
+      background: #faf2f0;
+      color: #9c6270;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Badge Status */
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .badge-baru { background: #e3effd; color: #246bc6; }
+    .badge-proses { background: #fff7e6; color: #d48806; }
+    .badge-selesai { background: #f6ffed; color: #389e0d; }
+
+    /* Info Baris */
+    .order-info {
+      border-top: 1px dashed #ebdcd5;
+      border-bottom: 1px dashed #ebdcd5;
+      padding: 0.75rem 0;
+      margin-bottom: 1rem;
+    }
+
+    .order-row {
+      display: flex;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .order-row:last-child { margin-bottom: 0; }
+
+    .order-row .lbl {
+      width: 100px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .order-row .val {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    /* Aksi Tombol Kartu */
+    .order-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .status-select {
+      padding: 0.35rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      background: #faf8f6;
+      font-family: var(--font-sans);
+    }
+
+    .del-btn {
+      padding: 0.35rem 0.75rem;
+      background: #fff;
+      color: #d9534f;
+      border: 1px solid #f5cecd;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-left: auto; /* Dorong ke pojok kanan */
+    }
+
+    .del-btn:hover { background: #fdf3f3; }
+
+    /* State Kosong */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: #fff;
+      border-radius: 16px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      border: 1px dashed var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .admin-nav { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .logout-btn { align-self: flex-end; }
+      .del-btn { margin-left: 0; width: 100%; text-align: center; margin-top: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper" id="loginPage">
+    <div class="login-box">
+      <h2>Panel Admin 🌸</h2>
+      <p>Khusus pemilik toko Fresh Cute Flower</p>
+      
+      <input type="password" id="passwordInput" placeholder="Masukkan password admin..." onkeydown="if(event.key==='Enter') doLogin()">
+      <button onclick="doLogin()">Masuk Sistem 🔑</button>
+      
+      <div class="login-error" id="loginError">Password salah, silakan coba lagi! 🌷</div>
+    </div>
+  </div>
+
+  <div class="admin-wrapper" id="adminPage">
+    
+    <div class="admin-nav">
+      <div class="admin-title">
+        <h1>Dashboard Pesanan</h1>
+        <p>Pantau & kelola orderan masuk secara real-time</p>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Keluar Panel 🚪</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="num" id="statTotal">0</span>
+        <span class="label">📦 Total Order</span>
+      </div>
+      <div class="stat-card" style="border-left: 4px solid #246bc6">
+        <span class="num" id="statBaru" style="color:#246bc6">0</span>
+        <span class="label">🔵 Pesanan Baru</span>
+      </div>
+      <div class="stat-card" style="border-left: 4px solid #d48806">
+        <span class="num" id="statProses" style="color:#d48806">0</span>
+        <span class="label">🟡 Sedang Diproses</span>
+      </div>
+      <div class="stat-card" style="border-left: 4px solid #389e0d">
+        <span class="num" id="statSelesai" style="color:#389e0d">0</span>
+        <span class="label">🟢 Selesai Kirim</span>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setFilter('semua', this)">Semua</button>
+        <button class="filter-btn" onclick="setFilter('baru', this)">🔵 Baru</button>
+        <button class="filter-btn" onclick="setFilter('diproses', this)">🟡 Diproses</button>
+        <button class="filter-btn" onclick="setFilter('selesai', this)">🟢 Selesai</button>
+      </div>
+
+      <button class="clear-all-btn" onclick="clearAll()">Kosongkan Semua Data 🗑</button>
+    </div>
+
+    <div class="order-list" id="orderList">
+      <div class="empty-state">Sedang memuat data dari Cloud Supabase... 🌷</div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // KONFIGURASI, PASSWORD & SUPABASE CLOUD
+    // ==========================================
+    const ADMIN_PASSWORD = 'RipkaCantik';
+    const SUPABASE_URL = "https://vhfhitghvmgqzxbglzfp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZmhpdGdodm1ncXp4YmdsemZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODU4NzEsImV4cCI6MjA5NDk2MTg3MX0.bJfdceQ44DQ8C35kZ_RT557EVBikku5B7BQqiYnJAWw";
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentFilter = 'semua';
+    let globalOrders = [];
+
+
+    // ==========================================
+    // 1. FUNGSI LOGIN
+    // ==========================================
+    function doLogin() {
+      const input = document.getElementById('passwordInput').value;
+      const errorEl = document.getElementById('loginError');
+
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('loginPage').style.display  = 'none';
+        document.getElementById('adminPage').classList.add('visible');
+        sessionStorage.setItem('fcf_admin', 'yes');
+        fetchOrdersFromDB();
+      } else {
+        errorEl.classList.remove('show');
+        void errorEl.offsetWidth; 
+        errorEl.classList.add('show');
+        document.getElementById('passwordInput').value = '';
+      }
+    }
+
+
+    // ==========================================
+    // 2. FUNGSI LOGOUT
+    // ==========================================
+    function doLogout() {
+      if (confirm('Yakin ingin keluar dari panel admin?')) {
+        sessionStorage.removeItem('fcf_admin');
+        location.reload();
+      }
+    }
+
+
+    // ==========================================
+    // 3. CEK STATUS LOGIN SEBELUMNYA
+    // ==========================================
+    if (sessionStorage.getItem('fcf_admin') === 'yes') {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('adminPage').classList.add('visible');
+      fetchOrdersFromDB();
+    }
+
+
+    // ==========================================
+    // 4. TARIK DATA DARI SUPABASE CLOUD
+    // ==========================================
+    function fetchOrdersFromDB() {
+      _supabase.from('pesanan').select('*').order('id', { ascending: false })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Gagal mengambil data Supabase:", error.message);
+        } else {
+          globalOrders = data;
+          renderOrders();
+        }
+      });
+    }
+
+
+    // ==========================================
+    // 5. FILTER TOMBOL STATUS ATAS
+    // ==========================================
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderOrders();
+    }
+
+
+    // ==========================================
+    // 6. UPDATE PANEL STATISTIK
+    // ==========================================
+    function updateStats(orders) {
+      document.getElementById('statTotal').textContent   = orders.length;
+      document.getElementById('statBaru').textContent    = orders.filter(o => (o.status || 'baru') === 'baru').length;
+      document.getElementById('statProses').textContent  = orders.filter(o => o.status === 'diproses').length;
+      document.getElementById('statSelesai').textContent = orders.filter(o => o.status === 'selesai').length;
+    }
+
+
+    // ==========================================
+    // 7. RENDER DAFTAR KARTU PESANAN
+    // ==========================================
+    function renderOrders() {
+      updateStats(globalOrders);
+
+      const filtered = currentFilter === 'semua'
+        ? globalOrders
+        : globalOrders.filter(o => (o.status || 'baru') === currentFilter);
+
+      const list = document.getElementById('orderList');
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state">Belum ada pesanan di kategori ini~ 🌷</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(order => {
+        const status = order.status || 'baru';
+
+        const badgeClass = {
+          baru:     'badge-baru',
+          diproses: 'badge-proses',
+          selesai:  'badge-selesai'
+        }[status] || 'badge-baru';
+
+        const badgeLabel = {
+          baru:     '🔵 Baru',
+          diproses: '🟡 Diproses',
+          selesai:  '🟢 Selesai'
+        }[status] || '🔵 Baru';
+
+        const tgl = order.tanggal
+          ? new Date(order.tanggal).toLocaleDateString('id-ID', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            }) + " " + new Date(order.tanggal).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+          : '-';
+
+        return `
+          <div class="order-card" id="card-${order.id}">
+            <div class="order-head">
+              <span class="order-name">🌸 ${order.nama_pembeli}</span>
+              <span class="order-time">${tgl} WIB</span>
+            </div>
+
+            <div class="order-badge">${order.detail_order}</div>
+            <span class="badge ${badgeClass}" style="margin-left:6px">${badgeLabel}</span>
+
+            <div class="order-info" style="margin-top:0.6rem">
+              <div class="order-row">
+                <span class="lbl">📱 HP</span>
+                <span class="val">${order.nomor_hp}</span>
+              </div>
+              <div class="order-row">
+                <span class="lbl">🔢 Total Harga</span>
+                <span class="val">Rp ${parseInt(order.total_harga).toLocaleString('id-ID')}</span>
+              </div>
+              <div class="order-row">
+                <span class="lbl">📍 Alamat</span>
+                <span class="val">${order.alamat}</span>
+              </div>
+            </div>
+
+            <div class="order-actions">
+              <label style="font-size:0.75rem;color:var(--text-muted)">Ubah status:</label>
+              <select class="status-select" onchange="updateStatus(${order.id}, this.value)">
+                <option value="baru"     ${status==='baru'     ? 'selected' : ''}>🔵 Baru</option>
+                <option value="diproses" ${status==='diproses' ? 'selected' : ''}>🟡 Diproses</option>
+                <option value="selesai"  ${status==='selesai'  ? 'selected' : ''}>🟢 Selesai</option>
+              </select>
+
+              <button class="del-btn" onclick="deleteOrder(${order.id})">Hapus 🗑</button>
+              <a href="https://wa.me/${order.nomor_hp}" target="_blank" style="text-decoration:none; background:#25D366; color:white; padding:5px 10px; border-radius:4px; font-size:0.8rem; margin-left:10px;">Hubungi WA</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+
+    // ==========================================
+    // 8. UPDATE STATUS PESANAN KE SUPABASE
+    // ==========================================
+    function updateStatus(id, newStatus) {
+      _supabase.from('pesanan').update({ status: newStatus }).eq('id', id)
+      .then(({ error }) => {
+        if (error) { 
+          alert("Gagal memperbarui status: " + error.message); 
+        } else { 
+          fetchOrdersFromDB(); 
+        }
+      });
+    }
+
+
+    // ==========================================
+    // 9. HAPUS SATU PESANAN DARI SUPABASE
+    // ==========================================
+    function deleteOrder(id) {
+      if (!confirm('Hapus pesanan ini secara permanen dari Cloud Supabase?')) return;
+
+      _supabase.from('pesanan').delete().eq('id', id)
+      .then(({ error }) => {
+        if (error) { 
+          alert("Gagal menghapus data: " + error.message); 
+        } else { 
+          fetchOrdersFromDB(); 
+        }
+      });
+    }
+
+
+    // ==========================================
+    // 10. HAPUS SEMUA PESANAN (CLEAR ALL)
+    // ==========================================
+    function clearAll() {
+      if (!confirm('Yakin hapus SEMUA pesanan di database? Tindakan ini tidak bisa dibatalkan!')) return;
+
+      _supabase.from('pesanan').delete().gt('id', 0)
+      .then(({ error }) => {
+        if (error) { 
+          alert("Gagal mengosongkan database: " + error.message); 
+        } else { 
+          fetchOrdersFromDB(); 
+        }
+      });
+    }
+
+
+    // ==========================================
+    // 11. AUTO REFRESH TIAP 30 DETIK (SUPABASE)
+    // ==========================================
+    setInterval(() => {
+      if (document.getElementById('adminPage').classList.contains('visible')) {
+        fetchOrdersFromDB(); 
+      }
+    }, 30000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <title>Fresh Cute Flower – Pesan Sekarang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+    /* ============================================
+       CSS VARIABLES
+       ============================================ */
+    :root {
+      --primary: #f3a3b5;       /* Pink pastel mawar lembut */
+      --primary-hover: #eb8fa3; /* Pink agak gelap saat di-hover */
+      --secondary: #e6dfd3;     /* Cream vintage lembut */
+      --bg-cream: #faf7f2;      /* Background halaman */
+      --text-dark: #4a3f3f;     /* Warna teks utama */
+      --text-muted: #8c7e7e;    /* Warna teks sekunder/redup */
+      --accent: #a3c4bc;        /* Hijau daun pastel daun sage */
+      --shadow: 0 10px 30px rgba(243, 163, 181, 0.15);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-sans: 'Poppins', Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animasi Kelopak Bunga Gugur */
+    .petal {
+      position: fixed;
+      top: -10%;
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 2;
+      border: 1px solid rgba(243, 163, 181, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-container {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      background-color: #fff6f7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--primary);
+    }
+
+    .logo-img {
+      width: 55px;
+      height: 55px;
+      object-fit: contain;
+    }
+
+    .header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      color: var(--text-dark);
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 0.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: var(--text-dark);
+      letter-spacing: 0.3px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-family: var(--font-sans);
+      color: var(--text-dark);
+      background-color: #faf8f5;
+      border: 1px solid #ebdcd5;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(243, 163, 181, 0.15);
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a3f3f' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/\%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 1rem) center;
+    }
+
+    textarea.form-control {
+      resize: none;
+      min-height: 80px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(243, 163, 181, 0.3);
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(243, 163, 181, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(1px);
+    }
+
+    /* Notifikasi Toast Sukses */
+    .toast {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4a3f3f;
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 400;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      z-index: 10;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+      opacity: 0;
+    }
+
+    .toast.show {
+      bottom: 2rem;
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1rem; }
+      .container { padding: 2rem 1.25rem; }
+      .header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="Fresh Cute Flower" class="logo-img">
+      </div>
+      <h1>Fresh Cute Flower</h1>
+      <p>Buket cantik untuk momen berhargamu 🌷</p>
+    </div>
+
+    <div id="orderForm">
+      <div class="form-group">
+        <label for="nama">🌸 Nama Lengkap</label>
+        <input type="text" id="nama" class="form-control" placeholder="Masukkan nama kamu...">
+      </div>
+
+      <div class="form-group">
+        <label for="nohp">📱 Nomor WhatsApp</label>
+        <input type="tel" id="nohp" class="form-control" placeholder="Contoh: 08123456xxx">
+      </div>
+
+      <div class="form-group">
+        <label for="produk">💐 Pilih Paket Buket</label>
+        <select id="produk" class="form-control">
+          <option value="" disabled selected>-- Pilih Buket --</option>
+          <option value="Buket 20K">Buket 20K</option>
+          <option value="Buket 10K">Buket 10K</option>
+          <option value="Buket 5K">Buket 5K</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="jumlah">🔢 Jumlah Order (Pcs)</label>
+        <input type="number" id="jumlah" class="form-control" min="1" value="1">
+      </div>
+
+      <div class="form-group">
+        <label for="tanggal">📅 Tanggal Pengiriman / Pengambilan</label>
+        <input type="date" id="tanggal" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="alamat">📍 Alamat Lengkap Pengiriman</label>
+        <textarea id="alamat" class="form-control" placeholder="Tulis alamat rumah lengkap atau tulis 'Ambil di Toko' jika ingin ambil sendiri..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="catatan">📝 Catatan Tambahan (Opsional)</label>
+        <textarea id="catatan" class="form-control" placeholder="Contoh: Warna pembungkus minta ganti merah muda, kartu ucapan diisi teks..."></textarea>
+      </div>
+
+      <button type="button" class="btn-submit" onclick="submitOrder()">Kirim Pesanan ✨</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Pesananmu sukses terkirim! 🌷</div>
+
+  <script>
+    // ==========================================
+    // KONFIGURASI SUPABASE CLOUD
+    // ==========================================
+    const SUPABASE_URL = "https://vhfhitghvmgqzxbglzfp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZmhpdGdodm1ncXp4YmdsemZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODU4NzEsImV4cCI6MjA5NDk2MTg3MX0.bJfdceQ44DQ8C35kZ_RT557EVBikku5B7BQqiYnJAWw";
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ==========================================
+    // 1. ANIMASI KELOPAK BETERBANGAN
+    // ==========================================
+    const petalEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️'];
+
+    function createPetal() {
+      const el = document.createElement('div');
+      el.className = 'petal';
+      el.textContent = petalEmojis[Math.floor(Math.random() * petalEmojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (0.9 + Math.random() * 1.1) + 'rem';
+
+      const dur = 7 + Math.random() * 7;
+      el.style.animationDuration = dur + 's';
+      el.style.animationDelay = (Math.random() * 4) + 's';
+      el.style.opacity = 0.5 + Math.random() * 0.5;
+
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), (dur + 5) * 1000);
+    }
+
+    setInterval(createPetal, 1300);
+
+    for (let i = 0; i < 6; i++) {
+      setTimeout(createPetal, i * 400);
+    }
+
+    // ==========================================
+    // 2. FUNGSI SUBMIT PESANAN KE SUPABASE
+    // ==========================================
+    function submitOrder() {
+      const nama    = document.getElementById('nama').value.trim();
+      const nohp    = document.getElementById('nohp').value.trim();
+      const produk  = document.getElementById('produk').value;
+      const jumlah  = document.getElementById('jumlah').value;
+      const tanggal = document.getElementById('tanggal').value;
+      const alamat  = document.getElementById('alamat').value.trim();
+      const catatan = document.getElementById('catatan').value.trim();
+
+      if (!nama || !nohp || !produk || !jumlah || !tanggal || !alamat) {
+        alert('Mohon lengkapi semua field ya~ 🌷');
+        return; 
+      }
+
+      // Perbaikan logika hitung harga asli (Buket 5K menjadi 5000)
+      let hargaPerPcs = 0;
+      if (produk === 'Buket 20K') { hargaPerPcs = 20000; } 
+      else if (produk === 'Buket 10K') { hargaPerPcs = 10000; } 
+      else if (produk === 'Buket 5K') { hargaPerPcs = 5000; }
+
+      const totalHarga = parseInt(jumlah) * hargaPerPcs;
+
+      let teksDetailOrder = `Produk: ${produk} (${jumlah} pcs) | Tgl Kirim: ${tanggal}`;
+      if (catatan) {
+        teksDetailOrder += ` | Catatan: ${catatan}`;
+      }
+
+      // Kirim data langsung ke Supabase Cloud
+      _supabase.from('pesanan').insert([
+        {
+          nama_pembeli: nama,
+          nomor_hp: nohp,
+          alamat: alamat,
+          detail_order: teksDetailOrder,
+          total_harga: totalHarga,
+          status: 'baru'
+        }
+      ])
+      .then(({ error }) => {
+        if (error) {
+          alert('Gagal mengirim ke database Supabase: ' + error.message);
+        } else {
+          const toast = document.getElementById('toast');
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 4500);
+
+          ['nama','nohp','jumlah','tanggal','alamat','catatan'].forEach(id => {
+            document.getElementById(id).value = '';
+          });
+          document.getElementById('produk').value = '';
+
+          alert('Pesananmu berhasil disimpan di Cloud Supabase! 🌸');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
