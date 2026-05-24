@@ -20,6 +20,28 @@ let keuChart      = null;
 
 
 // ============================================
+// FUNGSI FORMAT NOMOR WA
+// Ubah 08xxx → 628xxx (format internasional)
+// ============================================
+function formatWA(nomor) {
+  nomor = nomor.trim();
+  // Kalau diawali 0, ganti dengan 62
+  if (nomor.startsWith('0')) {
+    return '62' + nomor.slice(1);
+  }
+  // Kalau sudah pakai 62, biarkan
+  if (nomor.startsWith('62')) {
+    return nomor;
+  }
+  // Kalau pakai +62, hapus tanda +
+  if (nomor.startsWith('+62')) {
+    return nomor.slice(1);
+  }
+  // Default: langsung pakai
+  return nomor;
+}
+
+// ============================================
 // 1. FUNGSI LOGIN
 //    Cek password, tampilkan panel kalau benar
 // ============================================
