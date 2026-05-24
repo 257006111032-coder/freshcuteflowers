@@ -1,0 +1,538 @@
+/* ============================================
+   css/admin.css
+   CSS untuk halaman admin (admin.html)
+   ============================================ */
+
+:root {
+  --primary:      #d48a9b;
+  --primary-hover:#c27687;
+  --bg-dark:      #2b2526;
+  --bg-admin:     #fcfaf7;
+  --text-dark:    #3a3333;
+  --text-muted:   #7d7071;
+  --border-color: #ebdcd5;
+  --shadow:       0 10px 35px rgba(58, 51, 51, 0.08);
+  --font-serif:   'Playfair Display', Georgia, serif;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-sans:    'Poppins', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+  min-height: 100vh;
+  transition: background-color 0.4s ease;
+}
+
+/* ============================================
+   HALAMAN LOGIN
+   ============================================ */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.login-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.login-box h2 { font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 0.5rem; }
+.login-box p  { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+.login-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-align: center;
+  background: #faf8f6;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-box input:focus { border-color: var(--primary); background: #fff; }
+
+.login-box button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-box button:hover { background: var(--primary-hover); }
+
+.login-error { color: #d9534f; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+.login-error.show { display: block; animation: shake 0.3s ease; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-6px); }
+  75%       { transform: translateX(6px); }
+}
+
+/* ============================================
+   PANEL ADMIN
+   ============================================ */
+.admin-wrapper {
+  display: none;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.admin-wrapper.visible { display: block; }
+
+body:has(.admin-wrapper.visible) { background-color: var(--bg-admin); }
+
+/* ============================================
+   NAVIGASI ATAS
+   ============================================ */
+.admin-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.admin-title h1 { font-family: var(--font-serif); font-size: 1.8rem; }
+.admin-title p  { font-size: 0.85rem; color: var(--text-muted); }
+
+.logout-btn {
+  padding: 0.5rem 1rem;
+  background: #f4ece8;
+  border: 1px solid #ebd3c8;
+  color: #a65b6d;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover { background: #ebd3c8; }
+
+/* ============================================
+   TAB NAVIGASI (Pesanan / Keuangan)
+   ============================================ */
+.main-tabs {
+  display: flex;
+  background: #eee6e2;
+  padding: 0.25rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  max-width: 320px;
+}
+
+.main-tab-btn {
+  flex: 1;
+  padding: 0.55rem 1rem;
+  border: none;
+  background: transparent;
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 9px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.main-tab-btn.active {
+  background: #ffffff;
+  color: var(--text-dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+/* ============================================
+   SECTION PESANAN / KEUANGAN (toggle)
+   ============================================ */
+.pesanan-section  { display: block; }
+.pesanan-section.hidden { display: none; }
+.keuangan-section { display: none; }
+.keuangan-section.visible { display: block; }
+
+/* ============================================
+   STATISTIK PESANAN
+   ============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 1.25rem 1rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  border: 1px solid #f0eae6;
+}
+
+.stat-card .num   { font-size: 1.8rem; font-weight: 600; color: var(--text-dark); display: block; }
+.stat-card .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-top: 0.1rem; }
+
+/* ============================================
+   FILTER & KONTROL
+   ============================================ */
+.control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-tabs {
+  display: flex;
+  background: #eee6e2;
+  padding: 0.25rem;
+  border-radius: 10px;
+}
+
+.filter-btn {
+  padding: 0.4rem 1rem;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: #ffffff;
+  color: var(--text-dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.clear-all-btn {
+  padding: 0.45rem 1rem;
+  background: #fff;
+  color: #d9534f;
+  border: 1px solid #f5cecd;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-all-btn:hover { background: #fff5f5; }
+
+/* ============================================
+   KARTU PESANAN
+   ============================================ */
+.order-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.order-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0eae6;
+  transition: box-shadow 0.2s;
+}
+
+.order-card:hover { box-shadow: 0 6px 24px rgba(58,51,51,0.12); }
+
+.order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.order-name  { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; }
+.order-time  { font-size: 0.75rem; color: var(--text-muted); }
+.order-badge {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.order-info  { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.8rem; }
+.order-row   { display: flex; gap: 8px; font-size: 0.84rem; }
+.order-row .lbl { color: var(--text-muted); min-width: 100px; font-size: 0.8rem; }
+.order-row .val { color: var(--text-dark); font-weight: 500; }
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 0.8rem;
+  border-top: 1px solid #f5ede8;
+}
+
+.status-select {
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 0.82rem;
+  font-family: var(--font-sans);
+  color: var(--text-dark);
+  background: #faf8f5;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%237d7071' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 1.8rem;
+}
+
+/* Badge status pesanan */
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 3px 11px;
+}
+
+.badge-baru   { background: #e8f0fe; color: #1a56db; border: 1px solid #c3d3fa; }
+.badge-proses { background: #fff8e1; color: #d48806; border: 1px solid #ffe082; }
+.badge-selesai{ background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+.del-btn {
+  padding: 0.35rem 0.8rem;
+  background: #fff;
+  color: #d9534f;
+  border: 1px solid #f5cecd;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.del-btn:hover { background: #fff5f5; }
+
+.empty-state {
+  text-align: center;
+  padding: 2.5rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px dashed var(--border-color);
+}
+
+/* ============================================
+   SECTION KEUANGAN
+   ============================================ */
+.keu-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.keu-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0eae6;
+}
+
+.keu-card .keu-num   { font-size: 1.3rem; font-weight: 600; display: block; margin-bottom: 0.3rem; }
+.keu-card .keu-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+
+.color-masuk  { color: #2e7d32; }
+.color-keluar { color: #c62828; }
+.color-saldo  { color: #1565c0; }
+
+/* Form input transaksi */
+.keu-form {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0eae6;
+  margin-bottom: 2rem;
+}
+
+.keu-form h3 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  color: var(--text-dark);
+}
+
+.keu-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.keu-form-group label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.keu-form-group input,
+.keu-form-group select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  background: #faf8f5;
+  color: var(--text-dark);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+
+.keu-form-group input:focus,
+.keu-form-group select:focus {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.keu-submit-btn {
+  padding: 0.7rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.keu-submit-btn:hover { background: var(--primary-hover); }
+
+/* Grafik */
+.chart-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0eae6;
+  margin-bottom: 2rem;
+}
+
+.chart-box h3 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  color: var(--text-dark);
+}
+
+/* Tabel transaksi */
+.keu-table-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid #f0eae6;
+}
+
+.keu-table-box h3 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  color: var(--text-dark);
+}
+
+.keu-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+.keu-table th {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  background: #faf8f5;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.keu-table td {
+  padding: 0.75rem 0.8rem;
+  border-bottom: 1px solid #f5ede8;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.keu-table tr:last-child td { border-bottom: none; }
+.keu-table tr:hover td { background: #fdf8f6; }
+
+.badge-masuk {
+  background: #e8f5e9; color: #2e7d32;
+  padding: 2px 10px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 500;
+  border: 1px solid #a5d6a7;
+}
+
+.badge-keluar {
+  background: #ffebee; color: #c62828;
+  padding: 2px 10px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 500;
+  border: 1px solid #ef9a9a;
+}
+
+.del-keu-btn {
+  background: none;
+  border: 1px solid #f5cecd;
+  color: #d9534f;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.del-keu-btn:hover { background: #ffebee; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 700px) {
+  .stats-grid   { grid-template-columns: repeat(2, 1fr); }
+  .keu-summary  { grid-template-columns: 1fr; }
+  .keu-form-grid{ grid-template-columns: 1fr; }
+  .admin-wrapper{ padding: 1.2rem 1rem; }
+}
