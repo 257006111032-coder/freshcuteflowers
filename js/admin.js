@@ -539,3 +539,172 @@ function catatPemasukanOtomatis(order) {
     if (error) console.warn('Gagal catat pemasukan otomatis:', error.message);
   });
 }
+
+// ============================================
+// EXPORT EXCEL — Pakai library SheetJS
+// Ambil data dari Supabase → convert → download
+// ============================================
+
+
+// --------------------------------------------
+// Export data PESANAN ke Excel
+// --------------------------------------------
+function exportPesanan() {
+  // Ambil data pesanan terbaru dari Supabase
+  _supabase
+    .from('pesanan')
+    .select('*')
+    .order('id', { ascending: false })
+    .then(({ data, error }) => {
+      if (error) {
+        alert('Gagal ambil data: ' + error.message);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        alert('Belum ada data pesanan untuk di-export!');
+        return;
+      }
+
+      // Ubah data jadi format yang rapi untuk Excel
+      // Setiap objek = satu baris di Excel
+      const rows = data.map(o => ({
+        'No'            : o.id,
+        'Nama Pembeli'  : o.nama_pembeli || '-',
+        'Nomor HP'      : o.nomor_hp || '-',
+        'Detail Order'  : o.detail_order || '-',
+        'Alamat'        : o.alamat || '-',
+        'Total Harga'   : o.total_harga || 0,
+        'Status'        : o.status || 'baru',
+        'Tanggal Kirim' : o.tanggal || '-',
+        'Tanggal Masuk' : o.created_at
+          ? new Date(o.created_at).toLocaleDateString('id-ID', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            })
+          : '-'
+      }));
+
+      // Buat worksheet dari array of objects
+      // XLSX.utils.json_to_sheet = konversi JSON → sheet Excel
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+
+      // Atur lebar kolom agar tidak terlalu sempit
+      worksheet['!cols'] = [
+        { wch: 6  },  // No
+        { wch: 20 },  // Nama Pembeli
+        { wch: 16 },  // Nomor HP
+        { wch: 40 },  // Detail Order
+        { wch: 30 },  // Alamat
+        { wch: 14 },  // Total Harga
+        { wch: 12 },  // Status
+        { wch: 16 },  // Tanggal Kirim
+        { wch: 20 },  // Tanggal Masuk
+      ];
+
+      // Buat workbook (file Excel) dan masukkan worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Pesanan');
+
+      // Generate nama file dengan tanggal hari ini
+      const today = new Date().toLocaleDateString('id-ID', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      }).replace(/\//g, '-');
+
+      // Download file .xlsx
+      // XLSX.writeFile = simpan file ke komputer user
+      XLSX.writeFile(workbook, `Pesanan_FreshCuteFlower_${today}.xlsx`);
+    });
+}
+
+
+// --------------------------------------------
+// Export data KEUANGAN ke Excel
+// --------------------------------------------
+function exportKeuangan() {
+  _supabase
+    .from('keuangan')
+    .select('*')
+    .order('tanggal', { ascending: false })
+    .then(({ data, error }) => {
+      if (error) {
+        alert('Gagal ambil data: ' + error.message);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        alert('Belum ada data keuangan untuk di-export!');
+        return;
+      }
+
+      // Hitung total pemasukan & pengeluaran
+      let totalMasuk  = 0;
+      let totalKeluar = 0;
+
+      data.forEach(t => {
+        if (t.jenis === 'pemasukan')   totalMasuk  += parseInt(t.jumlah || 0);
+        if (t.jenis === 'pengeluaran') totalKeluar += parseInt(t.jumlah || 0);
+      });
+
+      // Buat baris data transaksi
+      const rows = data.map(t => ({
+        'No'          : t.id,
+        'Tanggal'     : t.tanggal
+          ? new Date(t.tanggal).toLocaleDateString('id-ID', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            })
+          : '-',
+        'Jenis'       : t.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
+        'Kategori'    : t.kategori || '-',
+        'Keterangan'  : t.keterangan || '-',
+        'Nominal (Rp)': parseInt(t.jumlah || 0),
+      }));
+
+      // Tambah baris kosong + baris ringkasan di bawah tabel
+      rows.push({});  // baris kosong pemisah
+      rows.push({
+        'No'          : '',
+        'Tanggal'     : '',
+        'Jenis'       : 'TOTAL PEMASUKAN',
+        'Kategori'    : '',
+        'Keterangan'  : '',
+        'Nominal (Rp)': totalMasuk,
+      });
+      rows.push({
+        'No'          : '',
+        'Tanggal'     : '',
+        'Jenis'       : 'TOTAL PENGELUARAN',
+        'Kategori'    : '',
+        'Keterangan'  : '',
+        'Nominal (Rp)': totalKeluar,
+      });
+      rows.push({
+        'No'          : '',
+        'Tanggal'     : '',
+        'Jenis'       : 'SALDO BERSIH',
+        'Kategori'    : '',
+        'Keterangan'  : '',
+        'Nominal (Rp)': totalMasuk - totalKeluar,
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+
+      // Atur lebar kolom
+      worksheet['!cols'] = [
+        { wch: 6  },  // No
+        { wch: 20 },  // Tanggal
+        { wch: 16 },  // Jenis
+        { wch: 16 },  // Kategori
+        { wch: 35 },  // Keterangan
+        { wch: 16 },  // Nominal
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Laporan Keuangan');
+
+      const today = new Date().toLocaleDateString('id-ID', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      }).replace(/\//g, '-');
+
+      XLSX.writeFile(workbook, `Keuangan_FreshCuteFlower_${today}.xlsx`);
+    });
+}
