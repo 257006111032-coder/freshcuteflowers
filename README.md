@@ -1,6 +1,3 @@
-<img width="1100" height="1505" alt="Tampilan Web" src="https://github.com/user-attachments/assets/1ecb2bff-3b4e-4e0b-bc14-99e60f62135b" />
-<div align="center">
-
 # 🌸 Fresh Cute Flower
 
 ### Web App Pemesanan Buket Bunga Berbasis Cloud
@@ -186,8 +183,8 @@ const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
 ## 📸 Screenshot
 
-> Tambahkan screenshot web kamu di sini!
-> Caranya: drag & drop gambar langsung ke editor README di GitHub
+<img width="550" height="752" alt="Tampilan Web" src="https://github.com/user-attachments/assets/1ecb2bff-3b4e-4e0b-bc14-99e60f62135b" />
+<div align="center">
 
 ---
 
